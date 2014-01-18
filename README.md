@@ -1,4 +1,5 @@
 This is a game, or at least it will be by the weekend!
+Please copy content of this file into http://jbt.github.io/markdown-editor/ for correct display
 
 ##to fix bufferoverflow issue, check all component for architectural consistency:
     jre
