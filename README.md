@@ -9,6 +9,7 @@ Please copy content of this file into http://jbt.github.io/markdown-editor/ for 
  - All of these must be in either 32 or 64 bit.
  
 Hour 5: game idea not set, experiencing error with git and pgs4a
+Hour 6.5: proposed some game ideas
 
 #Ideas:
  ## Game based around the parrying mechanic from Dark Souls:
