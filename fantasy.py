@@ -17,7 +17,6 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF) #this is the main display surface
-        pygame.mixer.pre_init(44100, -16, 1, 1024) #high buffer will result in sound delay, might be a pygame bug
         
     def on_event(self,event):
         if event.type == pygame.QUIT:
@@ -46,5 +45,3 @@ def main():
     game = Core()
     game.on_execute()
 
-main()    
-print 'this is a fantasy game'
