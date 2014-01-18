@@ -1,16 +1,22 @@
 This is a game, or at least it will be by the weekend!
 Please copy content of this file into http://jbt.github.io/markdown-editor/ for correct display
 
-##to fix bufferoverflow issue, check all component for architectural consistency:
-    jre
-    android sdk
-    python
-    pygame subset
- - All of these must be in either 32 or 64 bit.
+- Hour 5: game idea not set, experiencing error with git and pgs4a
+- Hour 6.5: proposed some game ideas
+- Hour 24: project about **20%** complete, however, the rate of progress is not linear.
+  ####_X_= Complete O = Half Done I = Incomplete
+ - [ ] Entity sprites
+ - [ ] Background
+ - [ ] Main menu
+ - [ ] Level select screen
+ - [X] Level manager
+ - [ ] Levels
+ - [ ] Warrior enemy
+ - [O] Mage enemy
+ - [ ] Pladin enemy
+ - [ ] Bosses
+ - [I] Engine
  
-Hour 5: game idea not set, experiencing error with git and pgs4a
-Hour 6.5: proposed some game ideas
-
 #Ideas:
  ## Game based around the parrying mechanic from Dark Souls:
 - normal attacks
