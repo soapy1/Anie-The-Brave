@@ -20,11 +20,15 @@ class Bro (pygame.sprite.Sprite):
 
 class Core:
 
+    back = False
+    forward = False
+
     def __init__(self):
         self._running = True
         self._display_surf = None
         self.size = self.width, self.height = 480, 800
 	self.background = BLACK
+
 
     def on_init(self):
         """
@@ -33,26 +37,40 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
-        
 	# Get android set up
 	android.init()
 
-    def on_event(self,event):
+
+    def on_event(self,event, bro):
 	android.map_key(android.KEYCODE_BACK, pygame.QUIT)       	
-        
+
 	if event.type == pygame.QUIT:
             self._running = False
 	elif event.type == pygame.MOUSEBUTTONDOWN:
-	    self.background = GREEN
+	    if event.pos[0] < 100:
+		back = True
+		forward = False
+	    if event.pos[0] > 380:
+		back = False
+		forward = True
+
+	elif event.type == pygame.MOUSEMOTION:
+	#    bro.rect.x = event.pos[0]
+	#    bro.rect.y = event.pos[1]
+	#    self.background = GREEN
+	    pass   
+ 
     
     def on_cleanup(self):
         pygame.quit()#pygame cleans up itself nicely
         raise SystemExit#terminate python
       
+
     def create_bro(self):
         bro = Bro()
 	return bro
-  
+
+
     def on_execute(self):
 
         '''The game loop'''
@@ -61,12 +79,17 @@ class Core:
 
 	clock = pygame.time.Clock()
 	bro = self.create_bro()
-        
+	 
 	while( self._running ):	    
             self._display_surf.fill(self.background)	# colourful
 	    self._display_surf.blit(bro.image, bro.rect)		# draw sef
-	    pygame.display.flip()			# update
 	    clock.tick(60)
+	    pygame.display.flip()			# update
+
+	    if back == True:
+		bro.rect.x -= 5
+	    if forward == True
+		bro.rect.x += 5
 
 	    # Allows android to pause the game
 	    if android:
@@ -74,9 +97,11 @@ class Core:
 		    android.wait_for_resume()
 
             for event in pygame.event.get():
-                self.on_event(event)
+                self.on_event(event, bro)
+
         self.on_cleanup()
         
+
 def main():
     game = Core()
     game.on_execute()
