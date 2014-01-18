@@ -8,7 +8,8 @@ RED = (255,0,0)
 BLUE = (0,0,255)
 GREEN = (0,255,0)
 BLACK = (0,0,0)
-
+SCREEN_WIDTH = 800
+SCREEN_HGHT = 480
 
 class Bro (pygame.sprite.Sprite):
 
@@ -20,15 +21,14 @@ class Bro (pygame.sprite.Sprite):
 
 class Core:
 
-    back = False
-    forward = False
 
     def __init__(self):
         self._running = True
         self._display_surf = None
-        self.size = self.width, self.height = 480, 800
+        self.size = self.width, self.height = SCREEN_WIDTH, SCREEN_HGHT
 	self.background = BLACK
-
+	self.back = False
+	self.forward = False
 
     def on_init(self):
         """
@@ -48,16 +48,19 @@ class Core:
             self._running = False
 	elif event.type == pygame.MOUSEBUTTONDOWN:
 	    if event.pos[0] < 100:
-		back = True
-		forward = False
+		self.back = True
+		self.forward = False
 	    if event.pos[0] > 380:
-		back = False
-		forward = True
+		self.back = False
+		self.forward = True
+	elif event.type == pygame.MOUSEBUTTONUP:
+	    self.back = False
+	    self.forward = False
 
-	elif event.type == pygame.MOUSEMOTION:
-	#    bro.rect.x = event.pos[0]
-	#    bro.rect.y = event.pos[1]
-	#    self.background = GREEN
+	if event.type == pygame.MOUSEMOTION:
+	    bro.rect.x = event.pos[0]
+	    bro.rect.y = event.pos[1]
+	    self.background = GREEN
 	    pass   
  
     
@@ -79,16 +82,18 @@ class Core:
 
 	clock = pygame.time.Clock()
 	bro = self.create_bro()
+	bro.rect.y = SCREEN_HGHT 
 	 
-	while( self._running ):	    
+	while( self._running ):	   
+	     
             self._display_surf.fill(self.background)	# colourful
 	    self._display_surf.blit(bro.image, bro.rect)		# draw sef
 	    clock.tick(60)
 	    pygame.display.flip()			# update
 
-	    if back == True:
+	    if self.back == True:
 		bro.rect.x -= 5
-	    if forward == True
+	    if self.forward == True:
 		bro.rect.x += 5
 
 	    # Allows android to pause the game
