@@ -17,6 +17,9 @@ Please copy content of this file into http://jbt.github.io/markdown-editor/ for 
  - [ ] Pladin enemy
  - [ ] Bosses
  - [I] Engine
+ - [ ] Music
+ - [ ] SoundFX
+ - [ ] Save System
  
 #Ideas:
  ## Game based around the parrying mechanic from Dark Souls:
