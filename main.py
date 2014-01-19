@@ -1,4 +1,4 @@
-#import fantasy
+import fantasy
 import pygame
 try:
    import android
@@ -13,9 +13,9 @@ GREEN = (0,255,0)
 
 def is_clicked(btn_x, btn_y, mou_x, mou_y, btn_w, btn_h):
     if (mou_x > btn_x) and (mou_x < btn_x+btn_w) and (mou_y > btn_y) and (mou_y < btn_y+btn_h):
-    return True
+        return True
     else:    
-    return False
+        return False
 
 def main():
     running = True
@@ -56,15 +56,13 @@ def main():
 
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
-            running = False
+                running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:
-            self.quit()
+                self.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-            if is_clicked(ngb_pos[0], ngb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
-#                game = fantasy.Core()
-#                game.on_execute()
-                background = GREEN
-            if is_clicked(qb_pos[0], qb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
-#                running = False
-                background = RED
+                if is_clicked(ngb_pos[0], ngb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
+                    game = fantasy.Core()
+                    game.on_execute()
+                if is_clicked(qb_pos[0], qb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
+                    running = False
 main()
