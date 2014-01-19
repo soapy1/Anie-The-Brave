@@ -27,7 +27,7 @@ class Core:
         self.size = self.width, self.height = SCREEN_WIDTH, SCREEN_HGHT
 	#TODO: change this to proper background
 	# 1080p 1920*1080
-	self.background = BLACK
+	self.background_base = WHITE
 	self.back = False
 	self.forward = False
 	self.gravity_effect = 0
@@ -39,6 +39,7 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
+	self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
 	# Get android set up
 	android.init()
 
@@ -100,7 +101,8 @@ class Core:
 
 	while( self._running ):	   
 	     
-            self._display_surf.fill(self.background)	# colourful
+            self._display_surf.fill(self.background_base)	
+	    self._display_surf.blit(self.background_image, (0,0))
 	    self._display_surf.blit(bro.image, bro.rect)		
 	    clock.tick(60)
 	    pygame.display.update()			# update
