@@ -5,6 +5,7 @@ import fantasy
 
 try:
     import android
+    from android import mixer
 except:
     android = None
     print 'ohh, snap!  Android was not imported'
@@ -63,11 +64,11 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:
-                self.quit()
+                pygame.quit()
+                raise SystemExit
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if is_clicked(ngb_pos[0], ngb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
                     game = fantasy.Core()
-                    game.on_execute()
                 if is_clicked(qb_pos[0], qb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
                     running = False
 main()

@@ -47,6 +47,13 @@ class LevelManager:
         """
         rect_list = []
         level = self.levels[name]
+        level_height = len(level)*20
+        level_width = len(level[0])*20
+        rect_list += [rect.Rect(0,0,0,level_height),
+                      rect.Rect(0,-100,level_width,100),
+                      rect.Rect(0,level_height,level_width,100),
+                      rect.Rect(level_width,0,100,level_height)]
+        
         for line in range(len(level)):
             for char in range(len(level[line])):
                 if level[line][char] == self.land:
@@ -80,7 +87,7 @@ class LevelManager:
         print "%d levels loaded" % len(self.levels)
         
 def main():
-    a = LevelManager((800,480))
+    a = LevelManager()
     a.load_level("meow")
     #print a.get_level("meow")
     print a.interpret("meow")
