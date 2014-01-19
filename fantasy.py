@@ -11,10 +11,11 @@ RED = (255,0,0)
 BLUE = (0,0,255)
 GREEN = (0,255,0)
 BLACK = (0,0,0)
+WHITE = (255,255,255)
 SCREEN_WIDTH = 800
 SCREEN_HGHT = 480
 
-GROUND = SCREEN_HGHT-40
+GROUND = SCREEN_HGHT-160
 GRAVITY = 5
 TERMINAL_VELOCITY = 30
 
@@ -24,6 +25,8 @@ class Core:
         self._running = True
         self._display_surf = None
         self.size = self.width, self.height = SCREEN_WIDTH, SCREEN_HGHT
+	#TODO: change this to proper background
+	# 1080p 1920*1080
 	self.background = BLACK
 	self.back = False
 	self.forward = False
@@ -48,7 +51,6 @@ class Core:
 	elif event.type == pygame.K_DELETE:
             pygame.quit()
 	elif event.type == pygame.MOUSEBUTTONDOWN:
-	    self.background = GREEN
 	    if event.pos[0] < 150:
 		bro.speed = -player.MAX_SPEED
 	    elif event.pos[0] > 650:
@@ -83,14 +85,14 @@ class Core:
 
     def on_execute(self):
 
-
         '''The game loop'''
         if self.on_init() == False:
             self._running = False
 
 	clock = pygame.time.Clock()
 
-	bro = player.Player() 
+	bro = player.Player()
+ 
 	bro.rect.y = GROUND
 	bro.rect.x = SCREEN_WIDTH/2
 	

@@ -1,6 +1,6 @@
 '''
 Class that desribes the main character
-She is a Player a.k.a Brosefina
+She is a Player a.k.a Brosefina a.k.a Annie
 '''
 import pygame
 
@@ -11,7 +11,7 @@ class Player (pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load('res/henry.png').convert()
+        self.image = pygame.image.load('res/annie.png').convert_alpha()
         self.rect = self.image.get_rect()
 	
 	# Character attributes
