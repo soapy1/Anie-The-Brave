@@ -1,22 +1,25 @@
 import math
+from time import sleep
+
 import pygame
+
 import level_manager
+import player
+
+
 try:
     import android
     from android import mixer
 except:
     android = None
     print 'ohh, snap!  Android was not imported'
-import player
-from time import sleep
 
 RED = (255,0,0)
 BLUE = (0,0,255)
 GREEN = (0,255,0)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
-SCREEN_WIDTH = 1920 #800
-SCREEN_HGHT = 1080 #480
+RES = SCREEN_WIDTH, SCREEN_HGHT = 1600, 900
 GROUND = SCREEN_HGHT-160
 GRAVITY = 0.25 # px/s^2
 TERMINAL_VELOCITY = 30
@@ -27,59 +30,68 @@ class Core:
         self._running = True
         self._display_surf = None
         self.size = self.width, self.height = SCREEN_WIDTH, SCREEN_HGHT
-        #TODO: change this to proper background
-        # 1080p 1920*1080
-        self.background_base = WHITE 
-        self.back = False 
-        self.forward = False 
-        self.m_left = False
-        self.m_right = False
+        self.on_execute()
         
     def on_init(self):
         """
         Create the game window
         """
-        
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
+        self.clock = pygame.time.Clock()
         self.background_image = pygame.image.load('res/background_rocky.png').convert()
+        mixer.music.load('res/song.mp3')
         self.black = pygame.image.load('res/black.png').convert_alpha()
         self.level_manager = level_manager.LevelManager()
         self.level_manager.load_level("tut")
         self.current_level = self.level_manager.interpret("tut")
-        lvl_map = self.level_manager.get_level("tut")
+        lvl_map = self.level_manager.next_level()
+        self.background_base = BLACK 
         self._display_surf.fill(self.background_base)
+        self.back = False 
+        self.forward = False 
+        self.m_left = False
+        self.m_right = False
+        self.move_zone_left = 150
+        self.move_zone_right = SCREEN_WIDTH-150
+        
+        self.anie = player.Player() # brosefina
+        self.anie.rect.y = GROUND
+        self.anie.rect.x = SCREEN_WIDTH/2
+        self.anie.ground = self.anie.rect.y
+        
         x,y = 0,0
         for l in lvl_map:
             x = 0
             for c in l:
                 if c != 'x':
-                    print (x,y),
                     self._display_surf.blit(self.black,(x,y))
                 x += 20
             y += 20
         # Get android set up
+        mixer.music.play()   
         if android:
             android.init()
             self.sounds = mixer.Sound('res/song.mp3')
             android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
                 
-    def on_event(self,event, anie):    
+    def on_event(self,event):    
         if event.type == pygame.QUIT:
             self.quit()
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:
             self.quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.pos[0] < 150:
+            print "mouse button down", event.pos
+            if event.pos[0] < self.move_zone_left:
                 self.m_left = True
-            elif event.pos[0] > 650:
+            elif event.pos[0] > self.move_zone_right:
                 self.m_right = True
             else:
                 if (self.is_pull_down()):
-                    anie.jumping = True
+                    self.anie.jumping = True
         elif event.type == pygame.MOUSEBUTTONUP:
-            anie.speed = 0
+            self.m_left,self.m_right = False, False
 
 
     def is_pull_down(self):
@@ -89,7 +101,7 @@ class Core:
         delta_y = initial[1]-second[1]
         if delta_y < 0:
             self.anie.jump_height = delta_y * self.anie.jump_strength
-            self.anie.jump_speed = min(30, delta_y / 100)
+            self.anie.jump_accel = min(0.25, delta_y / 1000)
             return True
         else:
             return False
@@ -105,35 +117,52 @@ class Core:
         """
         if self.m_left and self.m_right: # cannot move left and right at the same time.
             pass
+        
         elif self.m_left:
-            if self.anie.rect.move(-self.anie.speed,0).collidelist(self.current_level):
-                wall = self.current_level[self.anie.rect.move(-self.anie.speed)\
+            if self.anie.rect.move(-self.anie.speed,0).collidelist(self.current_level) != -1:
+                wall = self.current_level[self.anie.rect.move(-self.anie.speed,0)\
                                           .collidelist(self.current_level)]
                 self.anie.rect.move_ip(-math.fabs(wall.x - (self.anie.rect.x - self.anie.speed)),0)
+                self.m_left = False
+                print "collide left"
             else:
+                print "move left" 
                 self.anie.rect.move_ip(-self.anie.speed,0)
                 
         elif self.m_right: 
-            if self.anie.rect.move(self.anie.speed,0).collidelist(self.current_level):
-                wall = self.current_level[self.anie.rect.move(self.anie.speed)\
+            if self.anie.rect.move(self.anie.speed,0).collidelist(self.current_level) != -1:
+                wall = self.current_level[self.anie.rect.move(self.anie.speed,0)\
                                           .collidelist(self.current_level)]
-                self.anie.rect.move_ip(math.fabs(wall.x + (self.anie.rect.x - self.anie.speed)),0) 
+                print wall
+                print self.anie.rect
+                self.anie.rect.move_ip(math.fabs(wall.x + (self.anie.rect.x - self.anie.speed)),0)
+                self.m_right = False
+                print "collide right" 
             else:
+                print "move right" 
                 self.anie.rect.move_ip(self.anie.speed,0)
                 
         if self.anie.jumping:
-            if self.anie.rect.move(0,self.anie.jump_speed).collidelist(self.current_level):
-                wall = self.current_level[self.anie.rect.move(self.anie.speed)\
+            self.anie.up_speed = min((self.anie.up_speed + self.anie.jump_accel \
+                                      , TERMINAL_VELOCITY))
+            if self.anie.rect.move(0,self.anie.up_speed).collidelist(self.current_level) != -1:
+                wall = self.current_level[self.anie.rect.move(0,self.anie.up_speed)\
                                           .collidelist(self.current_level)]
-                self.anie.jump_height -= math.fabs(wall.y - (self.anie.rect.y - self.anie.jump_speed))
-            self.anie.rect.move_ip(0,self.anie.jump_speed)
+                self.anie.jump_height -= math.fabs(wall.y - (self.anie.rect.y - self.anie.up_speed))
+            self.anie.rect.move_ip(0,self.anie.up_speed)
         
-        if self.anie.rect.move(0,self.anie.down_speed).collidelist(self.current_level):
+        if self.anie.rect.move(0,self.anie.down_speed).collidelist(self.current_level) != -1:
             wall = self.current_level[self.anie.rect.move(0,self.anie.down_speed)\
                                       .collidelist(self.current_level)]
             self.anie.down_speed += GRAVITY
-            self.anie.rect.move_ip(0,math.fabs(self.y - (self.anie.rect.y - self.anie.downspeed)))
-            
+            self.anie.rect.move_ip(0,math.fabs(wall.y - (self.anie.rect.y - self.anie.down_speed)))
+   
+    def render(self):
+        self._display_surf.fill(self.background_base)
+        self._display_surf.blit(self.anie.image, self.anie.rect)        
+        self.clock.tick(60)
+        pygame.display.update()
+             
     def quit(self):
         pygame.quit()#pygame cleans up itself nicely
         raise SystemExit#terminate python
@@ -146,35 +175,21 @@ class Core:
 
         while(self._running):    
             # Dat DJ
-            if android and mixer.get_busy() == False:
-                mixer.music.load('res/song.mp3')
-                mixer.music.play()   
-                
-            clock = pygame.time.Clock()
-        
-            anie = player.Player()
-         
-            anie.rect.y = GROUND
-            anie.rect.x = SCREEN_WIDTH/2
-            
-            anie.ground = anie.rect.y
-            #self._display_surf.blit(self.background_image, (0,0))
-            self._display_surf.blit(anie.image, anie.rect)        
-            clock.tick(60)
-            pygame.display.update()            # update
-            # Allows android to pause the game
-            if android:
+            if android:             # Pause the game when app is not in focus
                 if android.check_pause():
                     android.wait_for_resume()
-    
+            #self._display_surf.blit(self.background_image, (0,0))
             for event in pygame.event.get():
-                self.on_event(event, anie)
+                self.on_event(event)
+                
+            self.movement()
+            self.render()
+
     
         self.quit()
         
 
 def main():
     game = Core()
-    game.on_execute()
 
 main()

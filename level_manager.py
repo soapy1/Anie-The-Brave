@@ -1,6 +1,7 @@
-import pygame 
-import logging
-    
+
+import pygame.rect as rect
+
+
 class LevelManager:
     """ handle level files.
     """
@@ -11,7 +12,11 @@ class LevelManager:
     paladin_spawn = 'P'
     
     def __init__(self):
+        """ initialize the level manager.
+            screen_res - The resolution of the game (width, height)
+        """
         self.levels = {}
+        self.current_level = -1
         
     def load_level(self,file_name):
         """filename - the name of level to load.
@@ -21,6 +26,13 @@ class LevelManager:
         for line in level_file:
             as_list.append([x for x in line.strip()])
         self.levels[file_name] = as_list
+            
+    def next_level(self):
+        if len(self.levels) >= self.current_level+1:
+            return self.levels[self.levels.keys()[self.current_level+1]] #list indices start at 0, so current level is -1
+            self.current_level += 1
+            
+        return None
     
     def get_level(self,level_name):
         try:
@@ -38,39 +50,40 @@ class LevelManager:
         for line in range(len(level)):
             for char in range(len(level[line])):
                 if level[line][char] == self.land:
-                    width = 1
-                    height = 1 
+                    height = 1
                     tmp_char = char
                     temp_line = line
                     while True:
                         try:
                             if level[line][tmp_char] == self.land:
-                                width += 1
                                 level[line][tmp_char] = None
+                                height = 1
+                                while True:
+                                    try:
+                                        if level[temp_line][char] == self.land:
+                                            height += 1
+                                            level[temp_line][char] = None
+                                        else: 
+                                            break
+                                        temp_line+=1
+                                    except IndexError:
+                                        break
+                                break                                
                             else: 
                                 break
-                            tmp_char += 1
                         except IndexError:
                             break
-                    while True:
-                        try:
-                            if level[temp_line][char] == self.land:
-                                height += 1
-                                level[temp_line][char] = None
-                            else: 
-                                break
-                            temp_line+=1
-                        except IndexError:
-                            break
-                    rect_list.append(pygame.rect.Rect(line*20,char*20,width*20,height*20))
+                    rect_list.append(rect.Rect(char*20, line*20, 20, height*20))
         return rect_list
     
     def info(self):
         print "%d levels loaded" % len(self.levels)
-        logging.info("%d levels loaded" % len(self.levels))
         
 def main():
-    a = LevelManager()
+    a = LevelManager((800,480))
     a.load_level("meow")
     #print a.get_level("meow")
     print a.interpret("meow")
+
+if __name__ == "__main__" :
+    main()
