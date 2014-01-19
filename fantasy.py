@@ -2,10 +2,16 @@ import pygame
 import player
 from time import sleep
 
+#try:
+#    import android
+#except:
+#    print 'ohh, snap!  Android was not imported'
+
 try:
-    import android
-except:
-    print 'ohh, snap!  Android was not imported'
+    import pygame.mixer as mixer
+except ImportError:
+    pass
+#    import android.mixer as mixer
 
 RED = (255,0,0)
 BLUE = (0,0,255)
@@ -40,15 +46,19 @@ class Core:
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
 	self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
+
+	pygame.mixer.init(44100,-16,300,1024)
+
 	# Get android set up
-	android.init()
+#	android.init()
 
 
     def on_event(self,event, bro):
-	android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)       	
+#	android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)       	
 
 	if event.type == pygame.QUIT:
 	    pygame.quit()
+	    mixer.music.stop()
 	elif event.type == pygame.K_DELETE:
             pygame.quit()
 	elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -99,12 +109,17 @@ class Core:
 	
 	bro.ground = bro.rect.y
 
-	while( self._running ):	   
+	while( self._running ):	
+
+	    # Dat DJ
+	    if mixer.get_busy() == False:
+		mixer.music.load('res/song.mp3')
+		mixer.music.play()   
 	     
             self._display_surf.fill(self.background_base)	
 	    self._display_surf.blit(self.background_image, (0,0))
 	    self._display_surf.blit(bro.image, bro.rect)		
-	    clock.tick(60)
+	    clock.tick(10)
 	    pygame.display.update()			# update
     
 	    self.gravity_effect += GRAVITY
@@ -119,9 +134,9 @@ class Core:
 		bro.rect.move_ip(0,-bro.jump_speed)
 
 	    # Allows android to pause the game
-	    if android:
-		if android.check_pause():
-		    android.wait_for_resume()
+#	    if android:
+#		if android.check_pause():
+#		    android.wait_for_resume()
 
             for event in pygame.event.get():
                 self.on_event(event, bro)
