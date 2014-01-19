@@ -1,4 +1,7 @@
 import pygame
+import player
+from time import sleep
+
 try:
     import android
 except:
@@ -11,16 +14,11 @@ BLACK = (0,0,0)
 SCREEN_WIDTH = 800
 SCREEN_HGHT = 480
 
-class Bro (pygame.sprite.Sprite):
-
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = pygame.image.load('res/henry.png').convert()
-        self.rect = self.image.get_rect()
+GROUND = SCREEN_HGHT-40
+GRAVITY = 5
+TERMINAL_VELOCITY = 30
 
 class Core:
-
 
     def __init__(self):
         self._running = True
@@ -29,6 +27,7 @@ class Core:
 	self.background = BLACK
 	self.back = False
 	self.forward = False
+	self.gravity_effect = 0
 
     def on_init(self):
         """
@@ -42,59 +41,78 @@ class Core:
 
 
     def on_event(self,event, bro):
-	android.map_key(android.KEYCODE_BACK, pygame.QUIT)       	
+	android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)       	
 
 	if event.type == pygame.QUIT:
-            self._running = False
+	    pygame.quit()
+	elif event.type == pygame.K_DELETE:
+            pygame.quit()
 	elif event.type == pygame.MOUSEBUTTONDOWN:
-	    if event.pos[0] < 100:
-		self.back = True
-		self.forward = False
-	    if event.pos[0] > 380:
-		self.back = False
-		self.forward = True
-	elif event.type == pygame.MOUSEBUTTONUP:
-	    self.back = False
-	    self.forward = False
-
-	if event.type == pygame.MOUSEMOTION:
-	    bro.rect.x = event.pos[0]
-	    bro.rect.y = event.pos[1]
 	    self.background = GREEN
-	    pass   
- 
+	    if event.pos[0] < 150:
+		bro.speed = -player.MAX_SPEED
+	    elif event.pos[0] > 650:
+		bro.speed = player.MAX_SPEED
+	    else:
+		if (self.is_pull_down() == True):
+		    bro.jump_up = True
+	elif event.type == pygame.MOUSEBUTTONUP:
+	    bro.speed = 0
+
+
+    def is_pull_down(self):
+	initial = pygame.mouse.get_pos()  # gets initial pos of finger
+	sleep(0.1)		    # wait half a sec
+	second = pygame.mouse.get_pos()   # gets the "last" position of the finger
+	chng = initial[1]-second[1]
+	if chng<0:
+	    return True
+	else:
+	    return False
+
+    def is_release(self):
+	if pygame.mouse.get_pos() == (0,0):
+	    return True	
+	else:
+	    return False
     
     def on_cleanup(self):
         pygame.quit()#pygame cleans up itself nicely
         raise SystemExit#terminate python
       
 
-    def create_bro(self):
-        bro = Bro()
-	return bro
-
-
     def on_execute(self):
+
 
         '''The game loop'''
         if self.on_init() == False:
             self._running = False
 
 	clock = pygame.time.Clock()
-	bro = self.create_bro()
-	bro.rect.y = SCREEN_HGHT 
-	 
+
+	bro = player.Player() 
+	bro.rect.y = GROUND
+	bro.rect.x = SCREEN_WIDTH/2
+	
+	bro.ground = bro.rect.y
+
 	while( self._running ):	   
 	     
             self._display_surf.fill(self.background)	# colourful
-	    self._display_surf.blit(bro.image, bro.rect)		# draw sef
+	    self._display_surf.blit(bro.image, bro.rect)		
 	    clock.tick(60)
-	    pygame.display.flip()			# update
+	    pygame.display.update()			# update
+    
+	    self.gravity_effect += GRAVITY
 
-	    if self.back == True:
-		bro.rect.x -= 5
-	    if self.forward == True:
-		bro.rect.x += 5
+	    
+	    bro.rect.x += bro.speed
+
+	    if bro.rect.y < GROUND-60:
+		bro.rect.y += self.gravity_effect
+
+	    if bro.jump_up == True:
+		bro.rect.move_ip(0,-bro.jump_speed)
 
 	    # Allows android to pause the game
 	    if android:
