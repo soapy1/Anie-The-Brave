@@ -41,7 +41,7 @@ class Core:
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
 	# Get android set up
 	android.init()
-
+	self.sounds = mixer.Sound('res/song.mp3')
 
     def on_event(self,event, bro):
 	android.map_key(android.KEYCODE_BACK, pygame.QUIT)       	
@@ -88,10 +88,9 @@ class Core:
 	 
 	while( self._running ):	 
 
-	    if mixer.music.get_busy() == False:
-		mixer.music.load('res/song.mp3')
-		mixer.music.play()
-	     
+	    self.sounds.play(-1,0,2000)
+	    mixer.periodic()
+
             self._display_surf.fill(self.background)	# colourful
 	    self._display_surf.blit(bro.image, bro.rect)		# draw sef
 	    clock.tick(60)
