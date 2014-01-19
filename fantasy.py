@@ -27,9 +27,9 @@ class Core:
         self.size = self.width, self.height = SCREEN_WIDTH, SCREEN_HGHT
         #TODO: change this to proper background
         # 1080p 1920*1080
-        self.background = BLACK
-        self.back = False
-        self.forward = False
+        self.background_base = WHITE 
+        self.back = False 
+        self.forward = False 
         self.gravity_effect = 0
 
     def on_init(self):
@@ -39,8 +39,11 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
+
         # Get android set up
-#         android.init()
+        android.init()
+        self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
+
 
 
     def on_event(self,event, bro):
@@ -99,26 +102,15 @@ class Core:
         bro.ground = bro.rect.y
     
         while( self._running ):       
-            self._display_surf.fill(self.background)    # colourful
+            self._display_surf.fill(self.background_base)    
+            self._display_surf.blit(self.background_image, (0,0))
             self._display_surf.blit(bro.image, bro.rect)        
             clock.tick(60)
             pygame.display.update()            # update
-        
-            self.gravity_effect += GRAVITY
-    
-            
-            bro.rect.x += bro.speed
-    
-            if bro.rect.y < GROUND-60:
-                bro.rect.y += self.gravity_effect
-    
-            if bro.jump_up == True:
-                bro.rect.move_ip(0,-bro.jump_speed)
-    
             # Allows android to pause the game
-#             if android:
-#                 if android.check_pause():
-#                     android.wait_for_resume()
+            if android:
+                if android.check_pause():
+                    android.wait_for_resume()
     
             for event in pygame.event.get():
                 self.on_event(event, bro)
