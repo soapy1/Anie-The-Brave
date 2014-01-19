@@ -1,14 +1,13 @@
 import math
 import pygame
-import player
-from time import sleep
-import level_manager
-from __future__ import division
 
 try:
     import android
+    from android import mixer
 except:
-    print 'ohh, snap!  PGS4A was not imported'
+    print 'ohh, snap!  Android was not imported'
+import player
+from time import sleep
 
 RED = (255,0,0)
 BLUE = (0,0,255)
@@ -43,6 +42,8 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
+
+<<<<<<< HEAD
         self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
         self.black = pygame.image.load('res/black.png').convert()
         self.level_manager = level_manager.LevelManager()
@@ -58,10 +59,10 @@ class Core:
             y+=20
         # Get android set up
         android.init()
-
-    def on_event(self,event, anie):
-        android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)           
-
+        self.sounds = mixer.Sound('res/song.mp3')
+        android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
+                
+    def on_event(self,event, anie):    
         if event.type == pygame.QUIT:
             self.quit()
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:
@@ -140,7 +141,7 @@ class Core:
         if self.on_init() == False:
             self._running = False
 
-        while(self._running ):    
+        while(self._running):    
             # Dat DJ
             if mixer.get_busy() == False:
                 mixer.music.load('res/song.mp3')
