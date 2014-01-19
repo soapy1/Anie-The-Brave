@@ -25,7 +25,7 @@ class Entities(AI):
         self.can_jump = True
         self.flying = False
         self.escaping = False
-        self.escape_threshold = 0
+        self.escape_threshold = 0.0
         
     def jump(self):
         pass
