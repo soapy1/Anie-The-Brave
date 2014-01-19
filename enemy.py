@@ -1,7 +1,8 @@
 import pygame
+from random import randint
 
 class BlobMan(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, screen):
 	pygame.sprite.Sprite.__init__(self)
 
 	self.main_img_one = pygame.image.load('res/enemy_one.png').convert_alpha()
@@ -20,6 +21,7 @@ class BlobMan(pygame.sprite.Sprite):
 	self.attack = 2
 	self.discovered = False
 	self.is_atk = False
+	self.scrn = screen
 
     def is_alive(self):
 	if self.health > 0:
@@ -37,27 +39,49 @@ class BlobMan(pygame.sprite.Sprite):
 	self.rect.y = y
     
 
-    def attack_animation(self, screen):
+    def attack_animation(self):
 	# TODO: collision
 	self.fr += 1
 	cur_frame = self.fr%2	
-	screen.blit(self.enemy_attack[cur_frame], self.rect)
+	self.scrn.blit(self.enemy_attack[cur_frame], self.rect)
 
 
+    # Returns the damage
+    def attack_action(self):
+	# animation
+	self.fr += 1
+	cur_frame = self.fr%2	
+	self.scrn.blit(self.enemy_attack[cur_frame], self.rect)
 
-    def attach_action(self):
-	pass
+	hit = randint(0,3)
+	if (hit == 0):
+	    return self.attack
+	else:
+	    return 0
 
     
-    def move(self):
-	pass
+    def move(self, anie_x, anie_y):
+	if (self.rect.x < anie_x):
+	    self.rect.x += 1
+	    self.render()
+	elif (self.rect.x > anie_x):
+	    self.rect.x -= 1
+	    self.render()
+
+	dist = abs(self.rect.x - anie.x)
+	if (dist < 10):
+	    dmg = self.attack_action()
+	    return dmg
+
+	return -1 
+	
 
 
-    def render(self, screen):
+    def render(self):
 	# TODO: collision
 	self.fr += 1
 	cur_frame = self.fr%3	
-	screen.blit(self.enemy_main[cur_frame], self.rect)
+	self.scrn.blit(self.enemy_main[cur_frame], self.rect)
 	
 
     def action(self):
