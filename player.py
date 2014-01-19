@@ -22,9 +22,10 @@ class Player (pygame.sprite.Sprite):
         self.ground = 0	
         self.jumping = False
         self.jump_strength = 1.7
-        self.up_speed = 0
+        self.up_speed = 12
         self.down_speed = 0
         self.jump_accel = 0
         self.jump_height = 0
         self.max_jump = 200
+        self.jump_frames = 0
 
