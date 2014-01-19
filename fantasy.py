@@ -41,7 +41,6 @@ class Core:
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
         self.clock = pygame.time.Clock()
         self.background_image = pygame.image.load('res/background_rocky.png').convert()
-        mixer.music.load('res/song.mp3')
         self.black = pygame.image.load('res/black.png').convert_alpha()
         self.level_manager = level_manager.LevelManager()
         self.level_manager.load_level("tut")
@@ -70,12 +69,12 @@ class Core:
                 x += 20
             y += 20
         # Get android set up
-        mixer.music.play()   
         if android:
             android.init()
             self.sounds = mixer.Sound('res/song.mp3')
             android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
-                
+            mixer.music.play()
+        
     def on_event(self,event):    
         if event.type == pygame.QUIT:
             self.quit()
@@ -124,9 +123,7 @@ class Core:
                                           .collidelist(self.current_level)]
                 self.anie.rect.move_ip(-math.fabs(wall.x - (self.anie.rect.x - self.anie.speed)),0)
                 self.m_left = False
-                print "collide left"
             else:
-                print "move left" 
                 self.anie.rect.move_ip(-self.anie.speed,0)
                 
         elif self.m_right: 
@@ -137,9 +134,7 @@ class Core:
                 print self.anie.rect
                 self.anie.rect.move_ip(math.fabs(wall.x + (self.anie.rect.x - self.anie.speed)),0)
                 self.m_right = False
-                print "collide right" 
             else:
-                print "move right" 
                 self.anie.rect.move_ip(self.anie.speed,0)
                 
         if self.anie.jumping:
@@ -177,19 +172,16 @@ class Core:
             # Dat DJ
             if android:             # Pause the game when app is not in focus
                 if android.check_pause():
+                    mixer.music.pause()
                     android.wait_for_resume()
+                    mixer.music.unpause()
             #self._display_surf.blit(self.background_image, (0,0))
             for event in pygame.event.get():
                 self.on_event(event)
-                
             self.movement()
             self.render()
-
-    
+            
         self.quit()
         
-
-def main():
-    game = Core()
-
-main()
+if __name__ == '__main__':
+    Core()
