@@ -74,4 +74,3 @@ def main():
     a.load_level("meow")
     #print a.get_level("meow")
     print a.interpret("meow")
-main()

@@ -1,10 +1,11 @@
 import math
 import pygame
-
+import level_manager
 try:
     import android
     from android import mixer
 except:
+    android = None
     print 'ohh, snap!  Android was not imported'
 import player
 from time import sleep
@@ -42,25 +43,27 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
-
-<<<<<<< HEAD
-        self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
-        self.black = pygame.image.load('res/black.png').convert()
+        self.background_image = pygame.image.load('res/background_rocky.png').convert()
+        self.black = pygame.image.load('res/black.png').convert_alpha()
         self.level_manager = level_manager.LevelManager()
         self.level_manager.load_level("tut")
         self.current_level = self.level_manager.interpret("tut")
-        map = self.level_manager.get_level("tut")
+        lvl_map = self.level_manager.get_level("tut")
+        self._display_surf.fill(self.background_base)
         x,y = 0,0
-        for l in map:
+        for l in lvl_map:
+            x = 0
             for c in l:
-                if c == self.level_manager.land:
+                if c != 'x':
+                    print (x,y),
                     self._display_surf.blit(self.black,(x,y))
-                x+=20
-            y+=20
+                x += 20
+            y += 20
         # Get android set up
-        android.init()
-        self.sounds = mixer.Sound('res/song.mp3')
-        android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
+        if android:
+            android.init()
+            self.sounds = mixer.Sound('res/song.mp3')
+            android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
                 
     def on_event(self,event, anie):    
         if event.type == pygame.QUIT:
@@ -143,22 +146,19 @@ class Core:
 
         while(self._running):    
             # Dat DJ
-            if mixer.get_busy() == False:
+            if android and mixer.get_busy() == False:
                 mixer.music.load('res/song.mp3')
                 mixer.music.play()   
                 
-                clock = pygame.time.Clock()
+            clock = pygame.time.Clock()
+        
+            anie = player.Player()
+         
+            anie.rect.y = GROUND
+            anie.rect.x = SCREEN_WIDTH/2
             
-                anie = player.Player()
-             
-                anie.rect.y = GROUND
-                anie.rect.x = SCREEN_WIDTH/2
-                
-                anie.ground = anie.rect.y
-    
-        while( self._running ):       
-            self._display_surf.fill(self.background_base)    
-            self._display_surf.blit(self.background_image, (0,0))
+            anie.ground = anie.rect.y
+            #self._display_surf.blit(self.background_image, (0,0))
             self._display_surf.blit(anie.image, anie.rect)        
             clock.tick(60)
             pygame.display.update()            # update
