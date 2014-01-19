@@ -14,6 +14,12 @@ class Warrior(Entities):
         
 class Mage(Entities):
     sprite = pg.sprite.Sprite()
+    
+    self.main_img_one = pygame.load('res/enemy_one.png').convert_alpha()
+    self.main_img_two = pygame.load('res/enemy_two.png').convert_alpha()
+    self.main_img_three = pygame.load('res/enemy_three.png').convert_alpha()
+    
+
     sprite.image = None #TODO add later
     sprite.rect = sprite.image.get_rect()
     attack_max_frame = 3
