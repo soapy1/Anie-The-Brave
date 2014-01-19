@@ -1,8 +1,12 @@
-import fantasy
 import pygame
+
+import fantasy
+
+
 try:
-   import android
+    import android
 except:
+    android = None
     print 'ohh, snap!  Android was not imported'
         
 SCREEN_WIDTH = 800
@@ -20,8 +24,9 @@ def is_clicked(btn_x, btn_y, mou_x, mou_y, btn_w, btn_h):
 def main():
     running = True
     pygame.init()
-    android.init()
-    android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
+    if android:
+        android.init()
+        android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
     size = width, height = SCREEN_WIDTH, SCREEN_HGHT
     background = WHITE 
     scr = pygame.display.set_mode(size)
