@@ -36,8 +36,8 @@ def main():
     new_game_img=('res/new_game_btn.png')
     quit_img=('res/quit_btn.png')
 
-    new_game_btn = pygame.image.load(new_game_img).convert()
-    quit_btn = pygame.image.load(quit_img).convert()
+    new_game_btn = pygame.image.load(new_game_img).convert_alpha()
+    quit_btn = pygame.image.load(quit_img).convert_alpha()
     ngb_pos = (200, 200)
     qb_pos = (200, 340)
 
