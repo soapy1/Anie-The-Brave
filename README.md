@@ -6,14 +6,14 @@ Please copy content of this file into http://jbt.github.io/markdown-editor/ for 
 - Hour 6.5: proposed some game ideas
 - Hour 24: project about **20%** complete, however, the rate of progress is not linear.
   ####_X_= Complete O = Half Done I = Incomplete
- - [ ] Entity sprites
- - [ ] Background
+ - [X] Entity sprites
+ - [X] Background
  - [ ] Main menu
  - [ ] Level select screen
  - [X] Level manager
  - [ ] Levels
  - [ ] Warrior enemy
- - [O] Mage enemy
+ - [X] Mage enemy
  - [ ] Pladin enemy
  - [ ] Bosses
  - [I] Engine
