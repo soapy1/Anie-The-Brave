@@ -1,6 +1,8 @@
 import pygame
+
 try:
     import android
+    from android import mixer
 except:
     print 'ohh, snap!  Android was not imported'
 
@@ -84,7 +86,11 @@ class Core:
 	bro = self.create_bro()
 	bro.rect.y = SCREEN_HGHT 
 	 
-	while( self._running ):	   
+	while( self._running ):	 
+
+	    if mixer.music.get_busy() == False:
+		mixer.music.load('res/song.mp3')
+		mixer.music.play()
 	     
             self._display_surf.fill(self.background)	# colourful
 	    self._display_surf.blit(bro.image, bro.rect)		# draw sef
