@@ -2,23 +2,16 @@ import pygame
 import player
 from time import sleep
 
-<<<<<<< HEAD
-#try:
-#    import android
-#except:
-#    print 'ohh, snap!  Android was not imported'
 
 try:
     import pygame.mixer as mixer
 except ImportError:
     pass
 #    import android.mixer as mixer
-=======
-# try:
-#     import android
-# except:
-#     print 'ohh, snap!  Android was not imported'
->>>>>>> 65583b053355f0b8b89faeca8147f10df969aec4
+ try:
+     import android
+ except:
+     print 'ohh, snap!  Android was not imported'
 
 RED = (255,0,0)
 BLUE = (0,0,255)
@@ -52,43 +45,15 @@ class Core:
         self._running = True
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size) #this is the main display surface
-<<<<<<< HEAD
 	self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
 
 	pygame.mixer.init(44100,-16,300,1024)
 
 	# Get android set up
-#	android.init()
-
-
-    def on_event(self,event, bro):
-#	android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)       	
-
-	if event.type == pygame.QUIT:
-	    pygame.quit()
-	    mixer.music.stop()
-	elif event.type == pygame.K_DELETE:
-            pygame.quit()
-	elif event.type == pygame.MOUSEBUTTONDOWN:
-	    if event.pos[0] < 150:
-		bro.speed = -player.MAX_SPEED
-	    elif event.pos[0] > 650:
-		bro.speed = player.MAX_SPEED
-	    else:
-		if (self.is_pull_down() == True):
-		    bro.jump_up = True
-	elif event.type == pygame.MOUSEBUTTONUP:
-	    bro.speed = 0
-=======
-
-        # Get android set up
-        android.init()
-        self.background_image = pygame.image.load('res/background_rocky.png').convert_alpha()
-
-
+	android.init()
 
     def on_event(self,event, bro):
-    #android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)           
+    android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)           
 
         if event.type == pygame.QUIT:
             self.quit()
@@ -104,7 +69,6 @@ class Core:
                     bro.jump_up = True
         elif event.type == pygame.MOUSEBUTTONUP:
             bro.speed = 0
->>>>>>> 65583b053355f0b8b89faeca8147f10df969aec4
 
 
     def is_pull_down(self):
@@ -134,16 +98,6 @@ class Core:
         if self.on_init() == False:
             self._running = False
 
-<<<<<<< HEAD
-	clock = pygame.time.Clock()
-
-	bro = player.Player()
- 
-	bro.rect.y = GROUND
-	bro.rect.x = SCREEN_WIDTH/2
-	
-	bro.ground = bro.rect.y
-
 	while( self._running ):	
 
 	    # Dat DJ
@@ -151,29 +105,6 @@ class Core:
 		mixer.music.load('res/song.mp3')
 		mixer.music.play()   
 	     
-            self._display_surf.fill(self.background_base)	
-	    self._display_surf.blit(self.background_image, (0,0))
-	    self._display_surf.blit(bro.image, bro.rect)		
-	    clock.tick(10)
-	    pygame.display.update()			# update
-    
-	    self.gravity_effect += GRAVITY
-
-	    
-	    bro.rect.x += bro.speed
-
-	    if bro.rect.y < GROUND-60:
-		bro.rect.y += self.gravity_effect
-
-	    if bro.jump_up == True:
-		bro.rect.move_ip(0,-bro.jump_speed)
-
-	    # Allows android to pause the game
-#	    if android:
-#		if android.check_pause():
-#		    android.wait_for_resume()
-
-=======
         clock = pygame.time.Clock()
     
         bro = player.Player()
@@ -194,7 +125,6 @@ class Core:
                 if android.check_pause():
                     android.wait_for_resume()
     
->>>>>>> 65583b053355f0b8b89faeca8147f10df969aec4
             for event in pygame.event.get():
                 self.on_event(event, bro)
     
