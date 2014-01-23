@@ -29,10 +29,14 @@ class LevelManager:
             
     def next_level(self):
         if len(self.levels) >= self.current_level+1:
-            return self.levels[self.levels.keys()[self.current_level+1]] #list indices start at 0, so current level is -1
             self.current_level += 1
+            return self.levels[self.levels.keys()[self.current_level]] #list indices start at 0, so current level is -1
             
         return None
+    
+    def get_current_dimensions(self):
+        return len(self.levels[self.levels.keys()[self.current_level]][0]) * 20,\
+               len(self.levels[self.levels.keys()[self.current_level]]) * 20
     
     def get_level(self,level_name):
         try:

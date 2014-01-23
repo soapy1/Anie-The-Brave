@@ -2,6 +2,7 @@ from entities import Entities
 import random
 import pygame as pg
 
+
 class Warrior(Entities):
     sprite = pg.sprite.Sprite()
     sprite.image = None #TODO add later
@@ -15,9 +16,7 @@ class Warrior(Entities):
 class Mage(Entities):
     sprite = pg.sprite.Sprite()
     
-    self.main_img_one = pygame.load('res/enemy_one.png').convert_alpha()
-    self.main_img_two = pygame.load('res/enemy_two.png').convert_alpha()
-    self.main_img_three = pygame.load('res/enemy_three.png').convert_alpha()
+
     
 
     sprite.image = None #TODO add later
@@ -28,7 +27,10 @@ class Mage(Entities):
     def __init__(self, spawn, health, max_dmg , min_dmg):
         super(Mage,self).__init__(spawn, health, max_dmg , min_dmg)
         self.sprite.move_ip(self.spawn)
-    
+        self.main_img_one = pg.image.load('res/enemy_one.png').convert_alpha()
+        self.main_img_two = pg.image.load('res/enemy_two.png').convert_alpha()
+        self.main_img_three = pg.image.load('res/enemy_three.png').convert_alpha()
+        
     def attack(self):
         #add animation
         self.attacking = True

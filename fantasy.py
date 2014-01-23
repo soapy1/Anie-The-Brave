@@ -25,6 +25,7 @@ RES = SCREEN_WIDTH, SCREEN_HGHT = 1600, 900
 GROUND = SCREEN_HGHT-160
 GRAVITY = 0.25 # px/s^2
 TERMINAL_VELOCITY = 30
+SCROLL_THREASHOLD = int(0.7*SCREEN_WIDTH)
 
 class Core:
 
@@ -56,31 +57,36 @@ class Core:
         self.move_zone_left = 150
         self.move_zone_right = SCREEN_WIDTH-150
         self.jump_target = 0
-        self.anie = player.Player() # brosefina
+        # Brosefina
+        self.anie = player.Player() 
         self.anie.rect.y = 100
         self.anie.rect.x = 1200
         self.anie.ground = self.anie.rect.y
-        
+        #Camera is a rectangle
+        self.camera = pygame.Rect((0,0),RES)
+        self.lvl_surface = pygame.Surface(self.level_manager \
+                         .get_current_dimensions()).convert_alpha()
+        self.lvl_surface.fill((0,0,0,0))
         x,y = 0,0
         for l in lvl_map:
             x = 0
             for c in l:
                 if c != 'x':
-                    self._display_surf.blit(self.black,(x,y))
+                    self.lvl_surface.fill((0,0,0),pygame.Rect(x,y,20,20))
                 x += 20
             y += 20
         # Get android set up
         if android:
             android.init()
-            self.bg_music = mixer.Sound('res/song.mp3')
+            self.bg_music = mixer.Sound('res/theme.wav')
             android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
-            self.bg_music.play(-1,0,2000)
+            print self.bg_music.play(-1,0,2000)
         
     def on_event(self,event):    
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE):
             self.quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            print "mouse button down", event.pos
+#             print "mouse button down", event.pos
             if event.pos[0] < self.move_zone_left:
                 self.m_left = True
             elif event.pos[0] > self.move_zone_right:
@@ -99,7 +105,6 @@ class Core:
         delta_y = initial[1]-second[1]
         if delta_y < 0:
             self.anie.jump_frames = int (math.fabs(delta_y * 1.5))
-            print "time's up, lets do this"
             return True
         else:
             return False
@@ -119,7 +124,6 @@ class Core:
         anie_height = self.anie.rect.height
         #print "%f y, %f target, %s" % (anie_y, self.jump_target,self.anie.jumping)
         if self.anie.jump_frames <= 0:
-            print "no jump"
             self.anie.jumping = False
      
         if self.m_left and self.m_right: # cannot move left and right at the same time.
@@ -146,6 +150,9 @@ class Core:
                 
             else:
                 self.anie.rect.move_ip(self.anie.speed,0)
+                anie_abs_x = self.anie.rect.x - self.camera.x
+                if anie_abs_x > SCROLL_THREASHOLD:
+                    self.camera.move_ip(20,0)
             
         if self.anie.jumping:
             print self.anie.jump_frames
@@ -168,18 +175,24 @@ class Core:
             self.anie.rect.move_ip(0,self.anie.down_speed)
             
         self.anie.down_speed = min(TERMINAL_VELOCITY,(self.anie.down_speed + GRAVITY))
+        
+    def camera_movement(self):
+        pass
    
     def render(self):
-        self._display_surf.blit(self.background_image,(0,0))
+        self._display_surf.blit(self.background_image,(0,0),self.camera)
+        #orange boxes representing collision boxes
         for e in self.current_level:
-            self._display_surf.fill(BLACK,e)
+            self._display_surf.fill((255, 165, 0),e)
+            
+        self._display_surf.blit(self.lvl_surface,(0,0),self.camera)
         self._display_surf.blit(self.anie.image, self.anie.rect)
         self.clock.tick(60)
         pygame.display.update()
              
     def quit(self):
-        pygame.quit()#pygame cleans up itself nicely
-        raise SystemExit#terminate python
+        pygame.quit()# pygame cleans up itself nicely
+        raise SystemExit# terminate python
       
 
     def on_execute(self):
@@ -195,6 +208,7 @@ class Core:
             for event in pygame.event.get():
                 self.on_event(event)
             self.movement()
+            #self.camera_movement()
             self.render()
             
         self.quit()
