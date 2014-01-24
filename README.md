@@ -1,6 +1,6 @@
 This is a game, or at least it will be by the weekend!
 
-The weekend has ended! The Anie is not a game yet, but someday she will be!
+The weekend has ended! Anie is not a game yet, but someday she will be!
 (???)[http://xkcd.com/133/]
 ```
     Once upon a midnight dreary 
@@ -14,7 +14,7 @@ The weekend has ended! The Anie is not a game yet, but someday she will be!
 ```
 
 Anie's art style:
-        
+       
     outline: grass + pen generic 
     filling: Crayon Thick 128 + tilt angle
     
