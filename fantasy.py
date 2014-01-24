@@ -152,7 +152,7 @@ class Core:
                 self.anie.rect.move_ip(self.anie.speed,0)
                 anie_abs_x = self.anie.rect.x - self.camera.x
                 if anie_abs_x > SCROLL_THREASHOLD:
-                    self.camera.move_ip(20,0)
+                    self.camera.move_ip(self.anie.speed,0)
             
         if self.anie.jumping:
             print self.anie.jump_frames
@@ -182,11 +182,12 @@ class Core:
     def render(self):
         self._display_surf.blit(self.background_image,(0,0),self.camera)
         #orange boxes representing collision boxes
-        for e in self.current_level:
-            self._display_surf.fill((255, 165, 0),e)
+#         for e in self.current_level:
+#             self._display_surf.fill((255, 165, 0),e)
             
         self._display_surf.blit(self.lvl_surface,(0,0),self.camera)
-        self._display_surf.blit(self.anie.image, self.anie.rect)
+        temp = self.anie.rect.move(-self.camera.x,0)
+        self._display_surf.blit(self.anie.image, temp)
         self.clock.tick(60)
         pygame.display.update()
              
