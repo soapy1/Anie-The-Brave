@@ -25,7 +25,8 @@ RES = SCREEN_WIDTH, SCREEN_HGHT = 1600, 900
 GROUND = SCREEN_HGHT-160
 GRAVITY = 0.25 # px/s^2
 TERMINAL_VELOCITY = 30
-SCROLL_THREASHOLD = int(0.7*SCREEN_WIDTH)
+SCROLL_THREASHOLD = int(0.3*SCREEN_WIDTH)
+text_list = ["Hi Sophia,","it was great working with you,", "hopefully we will meet again!"]
 
 class Core:
 
@@ -40,13 +41,13 @@ class Core:
         """
         self._running = True
         pygame.init()
-        self._display_surf = pygame.display.set_mode(RES) #this is the main display surface
+        self._display_surf = pygame.display.set_mode(RES, pygame.FULLSCREEN) #this is the main display surface
         self.clock = pygame.time.Clock()
-        self.background_image = pygame.image.load('res/background_rocky.png').convert()
+        self.background_image = pygame.image.load('res/background_looping.png').convert()
         self.black = pygame.image.load('res/black.png').convert_alpha()
         self.level_manager = level_manager.LevelManager()
-        self.level_manager.load_level("tut")
-        self.current_level = self.level_manager.interpret("tut")
+        self.level_manager.load_level("levels/tut")
+        self.current_level = self.level_manager.interpret("levels/tut")
         lvl_map = self.level_manager.next_level()
         self.background_base = WHITE 
         self._display_surf.fill(self.background_base)
@@ -57,32 +58,40 @@ class Core:
         self.move_zone_left = 150
         self.move_zone_right = SCREEN_WIDTH-150
         self.jump_target = 0
+        self.text_frame_count = 0
+        self.text_count = 0
+        self.text_surf = pygame.font.Font("School Book New.ttf",70).render(text_list[0],True,WHITE)
+        self.text_surf1 = pygame.font.Font("School Book New.ttf",70).render(text_list[1],True,WHITE)
+        self.text_surf2 = pygame.font.Font("School Book New.ttf",70).render(text_list[2],True,WHITE)
+        
         # Brosefina
+        self.sophia = 'here'
         self.anie = player.Player() 
         self.anie.rect.y = 100
-        self.anie.rect.x = 1200
+        self.anie.rect.x = 50
         self.anie.ground = self.anie.rect.y
         #Camera is a rectangle
         self.camera = pygame.Rect((0,0),RES)
+        self.level_dimensions = self.level_manager.get_current_dimensions()
         self.lvl_surface = pygame.Surface(self.level_manager \
                          .get_current_dimensions()).convert_alpha()
-        self.lvl_surface.fill((0,0,0,0))
-        x,y = 0,0
-        for l in lvl_map:
-            x = 0
-            for c in l:
-                if c != 'x':
-                    self.lvl_surface.fill((0,0,0),pygame.Rect(x,y,20,20))
-                x += 20
-            y += 20
+#         self.lvl_surface.fill((0,0,0,0))
+#         x,y = 0,0
+#         for l in lvl_map:
+#             x = 0
+#             for c in l:
+#                 if c != 'x':
+#                     self.lvl_surface.fill((0,0,0),pygame.Rect(x,y,20,20))
+#                 x += 20
+#             y += 20
         # Get android set up
         if android:
             android.init()
-            self.bg_music = mixer.Sound('res/theme.wav')
+            self.bg_music = mixer.music.load('res/song.mp3')#the theme just doesn't fit.. Im sorry!
             android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
-            print self.bg_music.play(-1,0,2000)
+            mixer.music.play()
         
-    def on_event(self,event):    
+    def on_event(self,event):
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE):
             self.quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -123,6 +132,16 @@ class Core:
         anie_ds = self.anie.down_speed
         anie_height = self.anie.rect.height
         #print "%f y, %f target, %s" % (anie_y, self.jump_target,self.anie.jumping)
+        if self.anie.rect.move(0,anie_ds).collidelist(self.current_level)!= -1:
+            wall = self.current_level[self.anie.rect.move(0,anie_ds)\
+                                      .collidelist(self.current_level)]
+            self.anie.rect.move_ip(0,math.fabs(anie_ds - (anie_y + anie_height + anie_ds - wall.y)))
+            self.anie.down_speed = 0
+            self.anie.jump_frames = 0
+        else:
+            self.anie.rect.move_ip(0,self.anie.down_speed)
+        self.anie.down_speed = min(TERMINAL_VELOCITY,(self.anie.down_speed + GRAVITY))
+        
         if self.anie.jump_frames <= 0:
             self.anie.jumping = False
      
@@ -138,6 +157,7 @@ class Core:
 #                 print wall.x,(anie_x-self.anie.speed+wall.x)
             else:
                 self.anie.rect.move_ip(-self.anie.speed,0)
+                self.pan_camera_l()
                 
         elif self.m_right: 
             if self.anie.rect.move(self.anie.speed,0).collidelist(self.current_level) != -1:
@@ -150,44 +170,66 @@ class Core:
                 
             else:
                 self.anie.rect.move_ip(self.anie.speed,0)
-                anie_abs_x = self.anie.rect.x - self.camera.x
-                if anie_abs_x > SCROLL_THREASHOLD:
-                    self.camera.move_ip(self.anie.speed,0)
+                self.pan_camera_r()
             
         if self.anie.jumping:
-            print self.anie.jump_frames
             self.anie.jump_frames -= 1
             self.anie.up_speed = min((math.fabs(self.anie.up_speed) + math.fabs(self.anie.jump_accel) \
                                       , TERMINAL_VELOCITY))
             if self.anie.rect.move(0,self.anie.up_speed).collidelist(self.current_level) != -1:
                 wall = self.current_level[self.anie.rect.move(0,self.anie.up_speed)\
                                           .collidelist(self.current_level)]
-                self.anie.jump_height -= math.fabs(wall.y - (self.anie.rect.y - self.anie.up_speed))
+                #self.anie.jump_height -= math.fabs(wall.y - (self.anie.rect.y - self.anie.up_speed))
             self.anie.rect.move_ip(0,-self.anie.up_speed)
         
-        if self.anie.rect.move(0,anie_ds).collidelist(self.current_level)!= -1:
-            wall = self.current_level[self.anie.rect.move(0,anie_ds)\
-                                      .collidelist(self.current_level)]
-            self.anie.rect.move_ip(0,math.fabs(anie_ds - (anie_y + anie_height + anie_ds - wall.y)))
-            self.anie.down_speed = 0
 
-        else:
-            self.anie.rect.move_ip(0,self.anie.down_speed)
-            
-        self.anie.down_speed = min(TERMINAL_VELOCITY,(self.anie.down_speed + GRAVITY))
         
-    def camera_movement(self):
-        pass
+    def pan_camera_r(self):
+        """ Pan the camera right.
+        """
+        #when its time to scroll
+        if self.anie.rect.x - self.camera.x > SCREEN_WIDTH - SCROLL_THREASHOLD:
+            if self.sophia == 'here':
+                self.sophia = 'Sophia'
+            # when edge is reached
+            if self.camera.x + self.anie.speed + SCREEN_WIDTH > self.level_dimensions[0]:
+                self.camera.move_ip(self.level_dimensions[0]-self.camera.x-SCREEN_WIDTH,0)
+            else:
+                self.camera.move_ip(self.anie.speed,0)
+            
+    def pan_camera_l(self):
+        """ Pan the camera left.
+        """
+        #when its time to scroll
+        if self.anie.rect.x - self.camera.x < SCROLL_THREASHOLD:
+            # when edge is reached
+            if self.camera.x - self.anie.speed < 0:
+                self.camera.move_ip(-self.camera.x,0)
+            else:
+                self.camera.move_ip(-self.anie.speed,0)
    
     def render(self):
         self._display_surf.blit(self.background_image,(0,0),self.camera)
-        #orange boxes representing collision boxes
-#         for e in self.current_level:
-#             self._display_surf.fill((255, 165, 0),e)
+        for e in self.current_level:
+            #orange
+            self._display_surf.fill((255, 165, 0),e.move(-self.camera.x,0))
             
-        self._display_surf.blit(self.lvl_surface,(0,0),self.camera)
-        temp = self.anie.rect.move(-self.camera.x,0)
-        self._display_surf.blit(self.anie.image, temp)
+        #self._display_surf.blit(self.lvl_surface,(0,0),self.camera)
+        if self.sophia == 'Sophia':
+            if self.text_frame_count == 100 or\
+             self.text_frame_count == 200:
+                self.text_count += 1
+            self.text_frame_count += 1;
+            if self.text_count == 0:
+                self._display_surf.blit(self.text_surf,(100,100))
+            if self.text_count == 1:
+                self._display_surf.blit(self.text_surf,(100,100))
+                self._display_surf.blit(self.text_surf1,(100,200))
+            if self.text_count == 2:
+                self._display_surf.blit(self.text_surf,(100,100))
+                self._display_surf.blit(self.text_surf1,(100,200))
+                self._display_surf.blit(self.text_surf2,(100,300))
+        self._display_surf.blit(self.anie.image, self.anie.rect.move(-self.camera.x,0))
         self.clock.tick(60)
         pygame.display.update()
              
@@ -205,13 +247,16 @@ class Core:
             # Dat DJ
             if android:             # Pause the game when app is not in focus
                 if android.check_pause():
+                    mixer.pause()
                     android.wait_for_resume()
+                    mixer.unpause()
             for event in pygame.event.get():
                 self.on_event(event)
             self.movement()
-            #self.camera_movement()
+#             if android:
+#                 if not mixer.music_channel.get_busy():
+#                     mixer.music.play()
             self.render()
-            
         self.quit()
         
 if __name__ == '__main__':
