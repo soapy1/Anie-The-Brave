@@ -1,0 +1,1 @@
+{"layout": "external", "orientation": "landscape", "package": "com.game.fantasy", "include_pil": false, "name": "fantasy", "icon_name": "fantasy", "version": "1", "permissions": ["INTERNET", "AUDIO_SETTINGS"], "include_sqlite": false, "numeric_version": "1"}

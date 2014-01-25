@@ -1,5 +1,23 @@
 This is a game, or at least it will be by the weekend!
 
+The weekend has ended! Anie is not a game yet, but someday she will be!
+(???)[http://xkcd.com/133/]
+```
+    Once upon a midnight dreary 
+    While I pondered, weak and weary, 
+    Over many a quaint and curious 
+    Volume of forgotten lore 
+    While i nodded, nearly napping, 
+    Suddenly there came a tapping 
+    As if someone gently coding 
+    Coding at my chamber door...
+```
+
+Anie's art style:
+       
+    outline: grass + pen generic 
+    filling: Crayon Thick 128 + tilt angle
+    
 Please copy content of this file into http://jbt.github.io/markdown-editor/ for correct display
 
 - Hour 5: game idea not set, experiencing error with git and pgs4a
@@ -20,6 +38,7 @@ Please copy content of this file into http://jbt.github.io/markdown-editor/ for 
  - [ ] Music
  - [ ] SoundFX
  - [ ] Save System
+ 
  
 #Ideas:
  ## Game based around the parrying mechanic from Dark Souls:
