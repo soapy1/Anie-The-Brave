@@ -5,7 +5,10 @@ import fantasy
 
 try:
     import android
+<<<<<<< HEAD
     from android import mixer
+=======
+>>>>>>> back
 except:
     android = None
     print 'ohh, snap!  Android was not imported'
@@ -37,8 +40,13 @@ def main():
     new_game_img=('res/new_game_btn.png')
     quit_img=('res/quit_btn.png')
 
+<<<<<<< HEAD
     new_game_btn = pygame.image.load(new_game_img).convert_alpha()
     quit_btn = pygame.image.load(quit_img).convert_alpha()
+=======
+    new_game_btn = pygame.image.load(new_game_img).convert()
+    quit_btn = pygame.image.load(quit_img).convert()
+>>>>>>> back
     ngb_pos = (200, 200)
     qb_pos = (200, 340)
 
@@ -64,11 +72,19 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:
+<<<<<<< HEAD
                 pygame.quit()
                 raise SystemExit
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if is_clicked(ngb_pos[0], ngb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
                     game = fantasy.Core()
+=======
+                self.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if is_clicked(ngb_pos[0], ngb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
+                    game = fantasy.Core()
+                    game.on_execute()
+>>>>>>> back
                 if is_clicked(qb_pos[0], qb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
                     running = False
 main()
