@@ -18,7 +18,7 @@ class Player (pygame.sprite.Sprite):
         self.max_dmg = 10
         self.min_dmg = 5
         self.visc = 6
-        self.speed = 10
+        self.speed = 20
         self.ground = 0	
         self.jumping = False
         self.jump_strength = 1.7

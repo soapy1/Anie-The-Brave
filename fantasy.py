@@ -1,6 +1,6 @@
 import math
 from time import sleep
-
+import enemy
 import pygame
 
 import level_manager
@@ -27,6 +27,7 @@ GRAVITY = 0.25 # px/s^2
 TERMINAL_VELOCITY = 30
 SCROLL_THREASHOLD = int(0.3*SCREEN_WIDTH)
 text_list = ["Hi Sophia,","it was great working with you,", "hopefully we will meet again!"]
+text_two = ["What up Alan", "I'm sure we will", "/"]
 
 class Core:
 
@@ -41,7 +42,10 @@ class Core:
         """
         self._running = True
         pygame.init()
-        self._display_surf = pygame.display.set_mode(RES, pygame.FULLSCREEN) #this is the main display surface
+        try:
+            self._display_surf = pygame.display.set_mode(RES, pygame.FULLSCREEN) #this is the main display surface
+        except:
+            self._display_surf = pygame.display.set_mode(RES)
         self.clock = pygame.time.Clock()
         self.background_image = pygame.image.load('res/background_looping.png').convert()
         self.black = pygame.image.load('res/black.png').convert_alpha()
@@ -63,18 +67,27 @@ class Core:
         self.text_surf = pygame.font.Font("School Book New.ttf",70).render(text_list[0],True,WHITE)
         self.text_surf1 = pygame.font.Font("School Book New.ttf",70).render(text_list[1],True,WHITE)
         self.text_surf2 = pygame.font.Font("School Book New.ttf",70).render(text_list[2],True,WHITE)
-        
+        self.greet_flo = pygame.font.Font("School Book New.ttf", 50).render(text_two[0],True,GREEN)
+        self.greet_bob = pygame.font.Font("School Book New.ttf", 50).render(text_two[1],True,GREEN)
+        self.greet_line = pygame.font.Font("School Book New.ttf", 50).render(text_two[2],True,GREEN)
+ 
+
+
         # Brosefina
         self.sophia = 'here'
         self.anie = player.Player() 
-        self.anie.rect.y = 100
-        self.anie.rect.x = 50
+        self.anie.rect.y = 50
+        self.anie.rect.x = 1000
         self.anie.ground = self.anie.rect.y
         #Camera is a rectangle
         self.camera = pygame.Rect((0,0),RES)
         self.level_dimensions = self.level_manager.get_current_dimensions()
         self.lvl_surface = pygame.Surface(self.level_manager \
                          .get_current_dimensions()).convert_alpha()
+	self.bob = enemy.BlobMan(self._display_surf, self.current_level, 2000, 0)
+        self.flo = enemy.BlobMan(self._display_surf, self.current_level, 0, 0)
+        self.flo.speed = 12
+#
 #         self.lvl_surface.fill((0,0,0,0))
 #         x,y = 0,0
 #         for l in lvl_map:
@@ -230,6 +243,14 @@ class Core:
                 self._display_surf.blit(self.text_surf1,(100,200))
                 self._display_surf.blit(self.text_surf2,(100,300))
         self._display_surf.blit(self.anie.image, self.anie.rect.move(-self.camera.x,0))
+
+        self._display_surf.blit(self.greet_flo, (self.flo.rect.x+50, 50))
+        self._display_surf.blit(self.greet_bob, (self.bob.rect.x+50, 150))
+        self._display_surf.blit(self.greet_line, (self.flo.rect.x+50, 100))
+        self._display_surf.blit(self.greet_line, (self.bob.rect.x+50, 200))
+        self.flo.move(self.anie.rect.x, self.anie.rect.width/2)
+        self.bob.move(self.anie.rect.x, self.anie.rect.width/2)
+
         self.clock.tick(60)
         pygame.display.update()
              
@@ -250,6 +271,7 @@ class Core:
                     mixer.pause()
                     android.wait_for_resume()
                     mixer.unpause()
+
             for event in pygame.event.get():
                 self.on_event(event)
             self.movement()
@@ -257,6 +279,7 @@ class Core:
 #                 if not mixer.music_channel.get_busy():
 #                     mixer.music.play()
             self.render()
+
         self.quit()
         
 if __name__ == '__main__':
