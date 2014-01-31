@@ -1,5 +1,4 @@
 import pygame
-
 import fantasy
 
 
@@ -34,8 +33,8 @@ def main():
 
     background_image = pygame.image.load('res/background_main_menu.png').convert()
  
-    new_game_img=('res/new_game_btn.png')
-    quit_img=('res/quit_btn.png')
+    new_game_img = 'res/new_game_btn.png'
+    quit_img = 'res/quit_btn.png'
 
     new_game_btn = pygame.image.load(new_game_img).convert_alpha()
     quit_btn = pygame.image.load(quit_img).convert_alpha()
@@ -68,7 +67,7 @@ def main():
                 raise SystemExit
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if is_clicked(ngb_pos[0], ngb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
-                    game = fantasy.Core()
+                    fantasy.Core()
                 if is_clicked(qb_pos[0], qb_pos[1], event.pos[0], event.pos[1], btn_width, btn_height):
                     running = False
 main()

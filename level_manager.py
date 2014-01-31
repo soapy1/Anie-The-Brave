@@ -1,4 +1,6 @@
-
+"""
+Originally Written in Great Canadian Appathon 2014.
+"""
 import pygame.rect as rect
 
 
