@@ -28,11 +28,11 @@ def main():
         android.init()
         android.map_key(android.KEYCODE_BACK, pygame.K_DELETE)
     size = width, height = SCREEN_WIDTH, SCREEN_HGHT
-    background = WHITE 
+    background = WHITE
     scr = pygame.display.set_mode(size)
 
     background_image = pygame.image.load('res/background_main_menu.png').convert()
- 
+
     new_game_img = 'res/new_game_btn.png'
     quit_img = 'res/quit_btn.png'
 
@@ -48,7 +48,7 @@ def main():
 
     while running == True:
 
-    # Allows android to pause the game
+        # Allows android to pause the game
         if android:
             if android.check_pause():
                 android.wait_for_resume()
@@ -56,10 +56,10 @@ def main():
         clock.tick(60)
         scr.blit(background_image, (0,0))
         scr.blit(new_game_btn, ngb_pos)
-        scr.blit(quit_btn, qb_pos) 
+        scr.blit(quit_btn, qb_pos)
         pygame.display.flip()
 
-        for event in pygame.event.get(): 
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:

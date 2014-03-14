@@ -28,4 +28,3 @@ class Player (pygame.sprite.Sprite):
         self.jump_height = 0
         self.max_jump = 200
         self.jump_frames = 0
-

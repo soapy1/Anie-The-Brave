@@ -8,9 +8,9 @@ GRAVITY = 0.25
 
 
 class BlobMan(pygame.sprite.Sprite):
-    def __init__(self, screen, cur_lvl, spawn_x, spawn_y):
+    def __init__(self, screen, camera, cur_lvl, spawn_x, spawn_y):
         pygame.sprite.Sprite.__init__(self)
-
+        self.camera = camera
         self.main_img_one = pygame.image.load('res/enemy_one.png').convert_alpha()
         self.main_img_two = pygame.image.load('res/enemy_two.png').convert_alpha()
         self.main_img_three = pygame.image.load('res/enemy_three.png').convert_alpha()
@@ -72,7 +72,7 @@ class BlobMan(pygame.sprite.Sprite):
             self.scrn.blit(self.enemy_attack[cur_frame], self.rect)
 
         hit = randint(0, 3)
-        if (hit == 0):
+        if hit == 0:
             return self.attack
         else:
             return 0
@@ -83,8 +83,8 @@ class BlobMan(pygame.sprite.Sprite):
         ds = self.down_speed
         h = self.rect.height
         if self.rect.move(0, ds).collidelist(self.current_lvl) != -1:
-            wall = self.current_lvl[self.rect.move(0, ds) \
-                .collidelist(self.current_lvl)]
+            wall = self.current_lvl[self.rect.move(0, ds)
+            .collidelist(self.current_lvl)]
             self.rect.move_ip(0, math.fabs(ds - (y + h + ds - wall.y)))
             self.down_speed = 0
         else:
@@ -100,17 +100,15 @@ class BlobMan(pygame.sprite.Sprite):
 
         self.side = (self.rect.x + self.rect.width) - (anie_x + anie_wid)
         self.movement_collision()
-        if (self.rect.x < anie_x):
+        if self.rect.x < anie_x:
             self.rect.x += self.speed
-            self.render()
-        elif (self.rect.x > anie_x):
+        elif self.rect.x > anie_x:
             self.rect.x -= self.speed
-            self.render()
 
-        dist = abs(self.side)
-        if (dist < 150):
-            dmg = self.attack_action()
-            return dmg
+        # dist = abs(self.side)
+        # if dist < 150:
+        #     dmg = self.attack_action()
+        #     return dmg
 
         return -1
 
