@@ -15,10 +15,6 @@ class Warrior(Entities):
         
 class Mage(Entities):
     sprite = pg.sprite.Sprite()
-    
-
-    
-
     sprite.image = None #TODO add later
     sprite.rect = sprite.image.get_rect()
     attack_max_frame = 3
