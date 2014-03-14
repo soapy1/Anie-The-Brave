@@ -46,6 +46,7 @@ class Core:
         except:
             self._display_surf = pygame.display.set_mode(RES)
         self.clock = pygame.time.Clock()
+        self.fps = 60
         self.background_image = pygame.image.load('res/background_looping.png').convert()
         self.black = pygame.image.load('res/black.png').convert_alpha()
         self.level_manager = level_manager.LevelManager()
@@ -113,6 +114,9 @@ class Core:
             else:
                 if (self.is_pull_down()):
                     self.anie.jumping = True
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+            self.anie.jump_frames = int(math.fabs(200 * 1.5))
+            self.anie.jumping = True
         elif event.type == pygame.MOUSEBUTTONUP:
             self.m_left, self.m_right = False, False
 
@@ -137,6 +141,7 @@ class Core:
     def movement(self):
         """ Move the entities that need moving
         """
+        conteract = False
         anie_x = self.anie.rect.x
         anie_y = self.anie.rect.y
         anie_ds = self.anie.down_speed
@@ -145,7 +150,7 @@ class Core:
         if self.anie.rect.move(0, anie_ds).collidelist(self.current_level) != -1:
             wall = self.current_level[self.anie.rect.move(0, anie_ds) \
                 .collidelist(self.current_level)]
-            self.anie.rect.move_ip(0, math.fabs(anie_ds - (anie_y + anie_height + anie_ds - wall.y)))
+            self.anie.rect.move_ip(0, math.fabs((self.anie.rect.y + self.anie.rect.height) - wall.y))
             self.anie.down_speed = 0
             self.anie.jump_frames = 0
         else:
@@ -186,11 +191,13 @@ class Core:
             self.anie.jump_frames -= 1
             self.anie.up_speed = min((math.fabs(self.anie.up_speed) + math.fabs(self.anie.jump_accel) \
                                           , TERMINAL_VELOCITY))
-            if self.anie.rect.move(0, self.anie.up_speed).collidelist(self.current_level) != -1:
-                wall = self.current_level[self.anie.rect.move(0, self.anie.up_speed) \
+            if self.anie.rect.move(0, -self.anie.up_speed).collidelist(self.current_level) != -1:
+                wall = self.current_level[self.anie.rect.move(0, -self.anie.up_speed) \
                     .collidelist(self.current_level)]
-                #self.anie.jump_height -= math.fabs(wall.y - (self.anie.rect.y - self.anie.up_speed))
-            self.anie.rect.move_ip(0, -self.anie.up_speed)
+                self.anie.rect.move_ip(0, -self.anie.rect.y - (wall.y + wall.height))
+                self.anie.jumping = False
+            else:
+                self.anie.rect.move_ip(0, -self.anie.up_speed)
 
 
     def pan_camera_r(self):
@@ -251,7 +258,7 @@ class Core:
                                 self.flo.rect.move(-self.camera.x,0))
         self._display_surf.blit(self.bob.enemy_main[self.bob.fr % 3],
                                 self.bob.rect.move(-self.camera.x, 0))
-        self.clock.tick(60)
+        self.clock.tick(self.fps)
         pygame.display.update()
 
     def quit(self):

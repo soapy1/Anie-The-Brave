@@ -116,7 +116,6 @@ class BlobMan(pygame.sprite.Sprite):
     def render(self):
         self.fr += 1
         cur_frame = self.fr % 3
-
         if self.side > 0:
             self.scrn.blit(flip(self.enemy_main[cur_frame], True, False), self.rect)
         else:

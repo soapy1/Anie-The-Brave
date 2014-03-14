@@ -37,8 +37,8 @@ class LevelManager:
         return None
     
     def get_current_dimensions(self):
-        return len(self.levels[self.levels.keys()[self.current_level]][0]) * 20,\
-               len(self.levels[self.levels.keys()[self.current_level]]) * 20
+        return len(self.levels[self.levels.keys()[self.current_level]][0]) * 32,\
+               len(self.levels[self.levels.keys()[self.current_level]]) * 32
     
     def get_level(self,level_name):
         try:
@@ -53,8 +53,8 @@ class LevelManager:
         """
         rect_list = []
         level = self.levels[name]
-        level_height = len(level)*20
-        level_width = len(level[0])*20
+        level_height = len(level)*32
+        level_width = len(level[0])*32
         rect_list += [rect.Rect(0,0,0,level_height),
                       rect.Rect(0,-100,level_width,100),
                       rect.Rect(0,level_height,level_width,100),
@@ -86,12 +86,13 @@ class LevelManager:
                                 break
                         except IndexError:
                             break
-                    rect_list.append(rect.Rect(char*20, line*20, 20, height*20))
+                    rect_list.append(rect.Rect(char*32, line*32, 32, height*32))
         return rect_list
     
     def info(self):
         print "%d levels loaded" % len(self.levels)
-        
+
+
 def main():
     a = LevelManager()
     a.load_level("meow")
