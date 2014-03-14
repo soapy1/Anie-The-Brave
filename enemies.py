@@ -15,11 +15,11 @@ class Warrior(Entities):
         
 class Mage(Entities):
     sprite = pg.sprite.Sprite()
-    sprite.image = None #TODO add later
+    sprite.image = None  #TODO add later
     sprite.rect = sprite.image.get_rect()
     attack_max_frame = 3
     action_max_frame = 3
-    discover_max_frame = 3 #will be used iftp
+    discover_max_frame = 3  #will be used iftp
     def __init__(self, spawn, health, max_dmg , min_dmg):
         super(Mage,self).__init__(spawn, health, max_dmg , min_dmg)
         self.sprite.move_ip(self.spawn)
@@ -49,7 +49,7 @@ class Mage(Entities):
         
     def react_attack(self, took_dmg):
         self.health -= took_dmg
-        pass #animation
+        pass  #animation
     
     
 class Paladin(Entities):
@@ -61,4 +61,3 @@ class Paladin(Entities):
     def __init__(self, spawn, health, max_dmg , min_dmg):
         super(Paladin,self).__init__(spawn, health, max_dmg , min_dmg)
         self.sprite.move_ip(self.spawn)
-        
