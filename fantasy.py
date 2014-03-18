@@ -194,8 +194,9 @@ class Core:
             if self.anie.rect.move(0, -self.anie.up_speed).collidelist(self.current_level) != -1:
                 wall = self.current_level[self.anie.rect.move(0, -self.anie.up_speed) \
                     .collidelist(self.current_level)]
-                self.anie.rect.move_ip(0, -self.anie.rect.y - (wall.y + wall.height))
+                self.anie.rect.move_ip(0, -math.fabs(self.anie.rect.y - (wall.y + wall.height)))
                 self.anie.jumping = False
+                self.anie.down_speed = GRAVITY
             else:
                 self.anie.rect.move_ip(0, -self.anie.up_speed)
 
